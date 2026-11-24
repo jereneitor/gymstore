@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GymStore — Suplementos, accesorios e indumentaria</title>
+  <meta name="description" content="Tienda online de suplementos, accesorios e indumentaria para el gimnasio." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-main">
+      <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
+
+      <a href="#" class="logo" data-vista="inicio">Gym<span>Store</span></a>
+
+      <form class="search-form" id="searchForm" role="search">
+        <input type="search" id="globalSearch" placeholder="Buscar suplementos, accesorios..." aria-label="Buscar productos" autocomplete="off" />
+        <button type="submit" aria-label="Buscar">⌕</button>
+      </form>
+
+      <nav class="main-nav" id="mainNav" aria-label="Navegación principal">
+        <button class="nav-link active" data-vista="inicio">Inicio</button>
+        <button class="nav-link" data-vista="catalogo">Catálogo</button>
+        <button class="nav-link cart-link" data-vista="carrito">🛒 Carrito <span class="cart-badge" id="cartCount">0</span></button>
+        <button class="nav-link user-link" id="userButton">Ingresar</button>
+        <button class="nav-link logout-link is-hidden" id="logoutButton">Salir</button>
+      </nav>
+    </div>
+    <nav class="category-bar" id="categoryNav" aria-label="Categorías"></nav>
+  </header>
+
+  <main>
+    <!-- ===================== INICIO ===================== -->
+    <section id="vista-inicio" class="vista is-active">
+      <div class="wrap">
+        <div class="hero">
+          <div class="hero-content">
+            <span class="eyebrow">Todo para tu entrenamiento</span>
+            <h1>Equipate para <strong>tu mejor versión</strong></h1>
+            <p>Suplementos, accesorios e indumentaria pensada para el gimnasio. Elegí, comprá y seguí tu envío desde tu cuenta.</p>
+            <div class="hero-actions">
+              <button class="btn btn-light" data-vista="catalogo">Ver catálogo</button>
+              <button class="btn btn-outline-light" data-cat-name="Suplementos">Comprar suplementos</button>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="hero-circle"></div>
+            <div class="hero-art-card">💪</div>
+          </div>
+        </div>
+
+        <section class="block">
+          <div class="block-head">
+            <div><span class="eyebrow dark">Explorá</span><h2>Comprá por categoría</h2></div>
+            <button class="link-btn" data-vista="catalogo">Ver todo →</button>
+          </div>
+          <div class="category-grid" id="homeCategories"></div>
+        </section>
+
+        <section class="block">
+          <div class="block-head">
+            <div><span class="eyebrow dark">Lo más elegido</span><h2>Productos destacados</h2></div>
+            <button class="link-btn" data-vista="catalogo">Ver todo →</button>
+          </div>
+          <div class="product-grid" id="featuredProducts"></div>
+        </section>
+
+        <section class="benefits">
+          <article><span>🚚</span><div><h3>Envío a todo el país</h3><p>Seguí tu pedido desde tu perfil.</p></div></article>
+          <article><span>🏋️</span><div><h3>Productos de calidad</h3><p>Seleccionados para entrenar de verdad.</p></div></article>
+          <article><span>🔒</span><div><h3>Compra simple</h3><p>Carrito, filtros y tu historial en un lugar.</p></div></article>
+        </section>
+      </div>
+    </section>
+
+    <!-- ===================== CATÁLOGO ===================== -->
+    <section id="vista-catalogo" class="vista">
+      <div class="wrap">
+        <div class="page-head">
+          <div><span class="eyebrow dark">Tienda</span><h1>Catálogo</h1><p>Filtrá por categoría, precio, talle y color.</p></div>
+          <span class="results-pill" id="resultsCount">0 productos</span>
+        </div>
+
+        <div class="catalog-layout">
+          <aside class="filters" aria-label="Filtros de búsqueda">
+            <div class="filters-head"><h3>Filtros</h3><button class="link-btn" id="clearFilters">Limpiar</button></div>
+
+            <div class="filter-group">
+              <label for="filterSearch">Buscar</label>
+              <input type="search" id="filterSearch" placeholder="Nombre del producto" autocomplete="off" />
+            </div>
+
+            <div class="filter-group">
+              <label for="filterCategoria">Categoría</label>
+              <select id="filterCategoria"><option value="">Todas</option></select>
+            </div>
+
+            <div class="filter-group">
+              <label>Precio ($)</label>
+              <div class="price-inputs">
+                <input type="number" id="minPrice" min="0" step="100" placeholder="Mín" aria-label="Precio mínimo" />
+                <input type="number" id="maxPrice" min="0" step="100" placeholder="Máx" aria-label="Precio máximo" />
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <label>Talles</label>
+              <div class="chip-options" id="filterTalles"></div>
+            </div>
+
+            <div class="filter-group">
+              <label>Colores</label>
+              <div class="chip-options" id="filterColores"></div>
+            </div>
+
+            <div class="filter-group">
+              <label for="sortBy">Ordenar por</label>
+              <select id="sortBy">
+                <option value="destacados">Destacados</option>
+                <option value="precio-asc">Menor precio</option>
+                <option value="precio-desc">Mayor precio</option>
+                <option value="nombre">Nombre (A-Z)</option>
+              </select>
+            </div>
+          </aside>
+
+          <div class="catalog-results">
+            <div class="product-grid" id="productGrid"></div>
+            <div class="empty-state is-hidden" id="emptyCatalog">
+              <span>🔎</span>
+              <h3>No encontramos productos</h3>
+              <p>Probá con otros filtros o limpiá la búsqueda.</p>
+              <button class="btn btn-ghost" id="emptyClear">Limpiar filtros</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CARRITO ===================== -->
+    <section id="vista-carrito" class="vista">
+      <div class="wrap">
+        <div class="page-head">
+          <div><span class="eyebrow dark">Tu compra</span><h1>Carrito de compras</h1><p>Revisá los productos antes de finalizar.</p></div>
+        </div>
+        <div class="cart-layout">
+          <div class="cart-list" id="cartItems"></div>
+          <aside class="summary" id="cartSummary"></aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== INGRESO ===================== -->
+    <section id="vista-ingreso" class="vista">
+      <div class="wrap auth-wrap">
+        <div class="auth-card">
+          <span class="eyebrow dark">Tu cuenta</span>
+          <h1>Ingresar a GymStore</h1>
+          <p>Ingresá como usuario para comprar o como vendedor para administrar la tienda.</p>
+
+          <div class="auth-tabs" role="tablist" aria-label="Tipo de cuenta">
+            <button class="auth-tab active" data-auth-role="usuario">Soy usuario</button>
+            <button class="auth-tab" data-auth-role="vendedor">Soy vendedor</button>
+          </div>
+
+          <div class="auth-subtabs">
+            <button class="subtab active" data-auth-mode="login">Ingresar</button>
+            <button class="subtab" data-auth-mode="registro">Crear cuenta</button>
+          </div>
+
+          <form id="authForm" novalidate>
+            <div class="field is-hidden" id="nombreField">
+              <label for="authNombre">Nombre y apellido</label>
+              <input type="text" id="authNombre" autocomplete="name" placeholder="Tu nombre" />
+            </div>
+            <div class="field">
+              <label for="authEmail">Email</label>
+              <input type="email" id="authEmail" autocomplete="email" placeholder="vos@email.com" required />
+            </div>
+            <div class="field">
+              <label for="authPassword">Contraseña</label>
+              <input type="password" id="authPassword" autocomplete="current-password" placeholder="Mínimo 4 caracteres" required />
+            </div>
+            <p class="form-error" id="authError" role="alert"></p>
+            <button type="submit" class="btn btn-primary btn-block" id="authSubmit">Ingresar</button>
+          </form>
+
+          <div class="demo-box">
+            <strong>Cuentas de prueba</strong><br />
+            Usuario: <code>usuario@demo.com</code> / <code>1234</code><br />
+            Vendedor: <code>vendedor@demo.com</code> / <code>1234</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PERFIL USUARIO ===================== -->
+    <section id="vista-perfil" class="vista">
+      <div class="wrap">
+        <div class="page-head">
+          <div><span class="eyebrow dark">Mi cuenta</span><h1>Mi perfil</h1><p>Mis compras y el seguimiento de mis envíos.</p></div>
+        </div>
+
+        <div class="gate is-hidden" id="profileGate">
+          <span>🔐</span>
+          <h2 id="profileGateTitle">Ingresá para ver tus compras</h2>
+          <p id="profileGateText">Necesitás una cuenta de usuario para ver tu historial y seguir tus envíos.</p>
+          <button class="btn btn-primary" data-vista="ingreso" id="profileGateBtn">Ir a ingresar</button>
+          <button class="btn btn-ghost" data-action="logout" id="profileGateLogout">Cerrar sesión actual</button>
+        </div>
+
+        <div class="profile-grid is-hidden" id="profileContent">
+          <aside class="profile-card" id="profileInfo"></aside>
+          <div>
+            <div class="block-head compact"><h2>Mis compras</h2></div>
+            <div class="orders" id="ordersList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PANEL VENDEDOR ===================== -->
+    <section id="vista-vendedor" class="vista">
+      <div class="wrap">
+        <div class="page-head">
+          <div><span class="eyebrow dark">Administración</span><h1>Panel del vendedor</h1><p>Gestioná categorías, productos y estados de pedidos.</p></div>
+        </div>
+
+        <div class="gate is-hidden" id="sellerGate">
+          <span>🔐</span>
+          <h2 id="sellerGateTitle">Acceso de vendedor requerido</h2>
+          <p id="sellerGateText">Ingresá con una cuenta de vendedor para administrar la tienda.</p>
+          <button class="btn btn-primary" data-vista="ingreso" id="sellerGateBtn">Ir a ingresar</button>
+          <button class="btn btn-ghost" data-action="logout" id="sellerGateLogout">Cerrar sesión actual</button>
+        </div>
+
+        <div class="is-hidden" id="sellerContent">
+          <div class="stats-grid" id="sellerStats"></div>
+
+          <div class="panel-tabs" role="tablist" aria-label="Secciones del panel">
+            <button class="panel-tab active" data-panel="productos">Productos</button>
+            <button class="panel-tab" data-panel="categorias">Categorías</button>
+            <button class="panel-tab" data-panel="pedidos">Pedidos</button>
+          </div>
+
+          <div class="panel is-active" id="panel-productos">
+            <div class="panel-head">
+              <h2>Productos publicados</h2>
+              <button class="btn btn-primary" id="newProductBtn">+ Nuevo producto</button>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Destacado</th><th>Acciones</th></tr></thead>
+                <tbody id="sellerProductsBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel" id="panel-categorias">
+            <div class="panel-head"><h2>Categorías</h2></div>
+            <form class="inline-form" id="categoryForm">
+              <input type="hidden" id="categoryId" />
+              <input type="text" id="categoryNombre" placeholder="Nombre de la categoría" required />
+              <input type="text" id="categoryDescripcion" placeholder="Descripción (opcional)" />
+              <button type="submit" class="btn btn-primary" id="categorySubmit">Agregar</button>
+              <button type="button" class="btn btn-ghost is-hidden" id="categoryCancel">Cancelar</button>
+            </form>
+            <div id="sellerCategories" class="list"></div>
+          </div>
+
+          <div class="panel" id="panel-pedidos">
+            <div class="panel-head"><h2>Pedidos recibidos</h2></div>
+            <div id="sellerOrders" class="list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div><a href="#" class="logo" data-vista="inicio">Gym<span>Store</span></a><p>Suplementos, accesorios e indumentaria para tu entrenamiento.</p></div>
+      <div><h4>Navegación</h4><button class="footer-link" data-vista="inicio">Inicio</button><button class="footer-link" data-vista="catalogo">Catálogo</button><button class="footer-link" data-vista="carrito">Carrito</button></div>
+      <div><h4>Mi cuenta</h4><button class="footer-link" data-vista="ingreso">Ingresar</button><button class="footer-link" data-vista="perfil">Mis compras</button><button class="footer-link" data-vista="vendedor">Panel vendedor</button></div>
+      <div><h4>Contacto</h4><p>hola@gymstore.com</p><p>Lunes a viernes, 9 a 18 h</p></div>
+    </div>
+    <div class="footer-bottom wrap">© 2026 GymStore. Proyecto de demostración.</div>
+  </footer>
+
+  <div id="modalRoot"></div>
+  <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
