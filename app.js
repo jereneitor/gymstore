@@ -133,6 +133,27 @@
     return [...new Set(String(texto || '').split(',').map((s) => s.trim()).filter(Boolean))];
   }
 
+  /* ---------- Sincronización entre pestañas ---------- */
+  function sincronizarDesdeStorage() {
+    state.categories = leer(STORAGE.categories, []);
+    state.products = leer(STORAGE.products, []);
+    state.users = leer(STORAGE.users, []);
+    state.session = leer(STORAGE.session, null);
+    state.cart = leer(STORAGE.cart, []);
+    state.orders = leer(STORAGE.orders, []);
+
+    updateHeader();
+    actualizarContador();
+    renderCategoryNav();
+    renderFilterOptions();
+    syncFiltersUI();
+    if (state.currentView === 'inicio') renderHome();
+    if (state.currentView === 'catalogo') renderCatalogo();
+    if (state.currentView === 'carrito') renderCarrito();
+    if (state.currentView === 'perfil') renderPerfil();
+    if (state.currentView === 'vendedor') renderVendedor();
+  }
+
   /* ---------- Navegación ---------- */
   function mostrarVista(id) {
     const vista = $('vista-' + id);
@@ -530,6 +551,12 @@
 
     gate.classList.add('is-hidden');
     content.classList.remove('is-hidden');
+
+    // Leemos siempre del almacenamiento para ver pedidos creados en otra pestaña/sesión.
+    state.categories = leer(STORAGE.categories, state.categories);
+    state.products = leer(STORAGE.products, state.products);
+    state.orders = leer(STORAGE.orders, state.orders);
+
     const stockBajo = state.products.filter((p) => Number(p.stock) < 10).length;
 
     $('sellerStats').innerHTML = [
@@ -740,7 +767,20 @@
     if (remove) { state.cart.splice(Number(remove.dataset.remove), 1); guardarCarrito(); renderCarrito(); return; }
 
     const tab = e.target.closest('[data-panel]');
-    if (tab) { setPanel(tab.dataset.panel); return; }
+    if (tab) {
+      setPanel(tab.dataset.panel);
+      if (tab.dataset.panel === 'pedidos') {
+        state.orders = leer(STORAGE.orders, state.orders);
+        renderListaPedidos();
+      }
+      return;
+    }
+
+    if (e.target.closest('#refreshOrdersBtn')) {
+      renderVendedor();
+      toast('Pedidos actualizados.', 'ok');
+      return;
+    }
 
     const authRole = e.target.closest('[data-auth-role]');
     if (authRole) { setAuthRole(authRole.dataset.authRole); return; }
@@ -844,6 +884,10 @@
 
     $('authForm').addEventListener('submit', enviarAuth);
     $('categoryForm').addEventListener('submit', guardarCategoria);
+
+    window.addEventListener('storage', function (e) {
+      if (!e.key || e.key.indexOf('gym_') === 0) sincronizarDesdeStorage();
+    });
 
     renderCategoryNav();
     renderFilterOptions();
